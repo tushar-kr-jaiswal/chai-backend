@@ -57,37 +57,48 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
-    // returns boolean by comparing the hashed and normal password
-    return await bcrypt.compare(password, this.password);
+    return await bcrypt.compare(password, this.password); // returns boolean by comparing the hashed and normal password
 };
 
-userSchema.methods.generateAccessToken = async function () {
+userSchema.methods.generateAccessToken = function () {
     // for short period of time
-    jwt.sign(
-        {
-            _id: this._id,
-            email: this.email,
-            username: this.username,
-            fullName: this.fullName,
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-        }
-    );
+    try {
+        return jwt.sign(
+            {
+                _id: this._id,
+                email: this.email,
+                username: this.username,
+                fullName: this.fullName,
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+                expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+            }
+            // console.log("Access Token generated")
+        );
+    } catch (error) {
+        console.error("Error generating access token:", error);
+        return null;
+    }
 };
 
-userSchema.methods.generateRefreshToken = async function () {
+userSchema.methods.generateRefreshToken = function () {
     // for longer period of time
-    jwt.sign(
-        {
-            _id: this._id,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-        }
-    );
+    try {
+        return jwt.sign(
+            {
+                _id: this._id,
+            },
+            process.env.REFRESH_TOKEN_SECRET,
+            {
+                expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+            }
+            // console.log("Refresh Token generated")
+        );
+    } catch (error) {
+        console.error("Error generating refresh token:", error);
+        return null;
+    }
 };
 
 export const User = mongoose.model("User", userSchema);
