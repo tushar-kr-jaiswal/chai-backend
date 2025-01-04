@@ -368,6 +368,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, user, "CoverImage updated Successfully"));
 });
+
 export {
     registerUser,
     loginUser,
